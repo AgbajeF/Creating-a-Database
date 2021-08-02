@@ -1,0 +1,237 @@
+Farouk Agbaje 
+
+Assumptions: 
+
+Posts are only posted to the user account and not on another user’s wall. 
+
+There are no other reactions to posts besides likes and that is entered into the database manually. 
+
+At this point marketing on Facebook will be free 
+
+There are no url links incorporated into the database. If an image, video, or GIF  
+
+ 
+
+SQL Code: 
+
+CREATE DATABASE FaceBook; 
+
+   
+
+CREATE TABLE users( 
+
+    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+
+    email VARCHAR(255) NOT NULL UNIQUE KEY, 
+
+    username VARCHAR(25) NOT NULL UNIQUE KEY, 
+
+    _password VARCHAR(255) NOT NULL, 
+
+    first_name VARCHAR(255) NOT NULL, 
+
+    last_name VARCHAR(255) NOT NULL, 
+
+    gender ENUM('Male', 'Female'), 
+
+    city VARCHAR(255), 
+
+    state_abbrev CHAR(2), 
+
+    country VARCHAR(255), 
+
+    date_of_birth DATE NOT NULL 
+
+); 
+
+  
+
+CREATE TABLE posts( 
+
+    post_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+
+    user_id INT NOT NULL, 
+
+    context VARCHAR(255), 
+
+    type ENUM('image', 'video', 'GIF', 'text'), 
+
+    date_posted DATE NOT NULL, 
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) 
+
+); 
+
+  
+
+CREATE TABLE comments( 
+
+    comment_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+
+    post_id INT NOT NULL, 
+
+    user_id INT NOT NULL, 
+
+    _comment TEXT NOT NULL, 
+
+    date_commented DATE NOT NULL, 
+
+    FOREIGN KEY (post_id) REFERENCES posts(post_id), 
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) 
+
+); 
+
+  
+
+CREATE TABLE likes( 
+
+    user_id INT NOT NULL AUTO_INCREMENT, 
+
+    post_id int NOT NULL, 
+
+    number_of_likes INT NOT NULL, 
+
+    PRIMARY KEY (user_id, post_id), 
+
+    UNIQUE INDEX (post_id, user_id), 
+
+    FOREIGN KEY (post_id) REFERENCES posts(post_id), 
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id) 
+
+); 
+
+  
+
+CREATE TABLE messages( 
+
+    message_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+
+    user_id_from INT NOT NULL, 
+
+    user_id_to INT NOT NULL, 
+
+    content text NOT NULL, 
+
+    date_messaged date NOT NULL, 
+
+    FOREIGN KEY (user_id_from) REFERENCES users(user_id), 
+
+    FOREIGN KEY (user_id_to) REFERENCES users(user_id) 
+
+); 
+
+  
+
+CREATE TABLE friends( 
+
+    user_id INT NOT NULL, 
+
+    friend_id INT NOT NULL, 
+
+    PRIMARY KEY (user_id, friend_id), 
+
+    UNIQUE INDEX (friend_id, user_id), 
+
+    FOREIGN KEY (user_id) REFERENCES users(user_id), 
+
+    FOREIGN KEY (friend_id) REFERENCES users(user_id) 
+
+); 
+
+ 
+
+Inserts: 
+
+INSERT INTO users(email, username, _password, first_name, last_name, gender, city, state_abbrev, country, date_of_birth) VALUES 
+
+('charlie.b@gmail.com', 'charlie best', 'snoopyistheman86', 'Charlie', 'Brown', 'Male', 'Los Angeles', 'CA', 'United States', '1976-02-17'), 
+
+('s.squarepants@gmail.com', 'the yellow frycook', 'garythesnail', 'SpongeBob', 'Squarepants', 'Male', 'Miami', 'FL', 'United States', '2000-03-06'), 
+
+('huey.freeman@yahoo.com', 'black hero', 'fightthepower2012', 'Huey', 'Freeman', 'Male', 'New Orleans', 'LA', 'United States', '2002-05-03'), 
+
+('benes.e@gmail.com', 'Ms. No Soup', 'jerrygeorgekramer', 'Elaine', 'Benes', 'Female', 'New York', 'NY', 'United States', '1962-01-29'), 
+
+('sandysworld@yahoo.com', 'lone squirrel', 'texasishome', 'Sandy', 'Cheeks', 'Female', 'Dallas', 'TX', 'United States', '1999-05-01'); 
+
+ 
+
+INSERT INTO posts(user_id, context, type, date_posted) VALUES 
+
+    (1, 'Purple Rain by Prince is my favorite song', 'text', '2018-04-05'), 
+
+    (2, 'Just made steak and potatoes', 'image', '2018-07-25'), 
+
+    (5, 'McDonalds is way better than Burger King', 'text', '2018-05-16'), 
+
+    (1, 'Really hate this snow storm right now', 'image', '2018-01-05'), 
+
+    (3, 'I believe I can fly', 'GIF', '2018-11-27'); 
+ 
+
+INSERT INTO comments(post_id, user_id, _comment, date_commented) VALUES 
+
+    (1, 4, 'Purple Rain is my jam too', '2018-04-05'), 
+
+    (2, 1, 'Looks delicious', '2018-07-25'), 
+
+    (5, 4, 'But you cant!', '2018-11-27'), 
+
+    (4, 3, 'Me too', '2018-01-05'), 
+
+    (4, 2, 'Me three', '2018-01-05'); 
+
+ 
+
+INSERT INTO likes(post_id, number_of_likes) VALUES 
+
+    (1, 30), 
+
+    (2, 5), 
+
+    (5, 2); 
+ 
+
+INSERT INTO messages(user_id_from, user_id_to, content, date_messaged) VALUES 
+
+    (4, 1, 'Do you like any other Prince song?', '2018-04-05' ), 
+
+    (1, 4, 'I love the whole Purple Rain album', '2018-04-05'), 
+
+    (2, 5, 'Chik-Fil-A is king', '2018-05-16'), 
+
+    (5, 2, 'Not possible, McDonalds has been around too long', '2018-05-16'); 
+
+ 
+
+INSERT INTO friends(user_id, friend_id) VALUES 
+
+    (4, 1), 
+
+    (1, 3), 
+
+    (2, 5), 
+
+    (3, 4), 
+
+    (1, 5), 
+
+    (4, 5), 
+
+    (5, 1); 
+
+Delete: 
+
+DELETE FROM messages WHERE message_id = 4; 
+
+  
+
+DELETE FROM comments WHERE comment_id = 5; 
+
+Retrieve: 
+
+SELECT * FROM users; 
+
+SELECT * FROM users WHERE first_name LIKE ‘S%’; 
